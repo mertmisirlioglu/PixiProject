@@ -27,7 +27,17 @@ const config = {
         new CopyPlugin([
             { from: 'src/index.html' },
             { from: 'src/css/style.css', to: 'css/' },
-            { from: 'src/images/logo.png', to: 'images/' },
+            // { from: 'src/images/*', to: 'images/' },
+            {
+                from: "src/images/**",
+
+                // if there are nested subdirectories , keep the hierarchy
+                transformPath(targetPath, absolutePath) {
+                    const assetsPath = path.resolve(__dirname, "images");
+                    const endpPath = absolutePath.slice(assetsPath.length - 2);
+                    return Promise.resolve(`${endpPath}`);
+                },
+            },
         ]),
     ],
     devServer: {

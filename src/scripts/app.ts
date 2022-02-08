@@ -1,6 +1,8 @@
 // app.ts
 
 import * as PIXI from 'pixi.js'
+// const tweenManager = require('pixi-tween');
+
 import { FpsMeter } from './fps-meter';
 
 interface EngineParams {
@@ -23,7 +25,8 @@ class Engine {
         this.renderer = PIXI.autoDetectRenderer({
             width: params.canvasW,
             height: params.canvasH,
-            antialias: true
+            antialias: true,
+            backgroundColor: 0xd3d3d3,
         });
         this.stage = new PIXI.Container();
         this.graphics = new PIXI.Graphics();
@@ -34,7 +37,7 @@ class Engine {
     } // constructor
 } // Engine
 
-const engine = new Engine({
+const engine: any = new Engine({
     containerId: 'game',
     canvasW: 800,
     canvasH: 450,
@@ -42,11 +45,13 @@ const engine = new Engine({
 });
 
 let fpsMeter: FpsMeter;
-const sprite = PIXI.Sprite.from('images/logo.png');
+let cardCount = 0;
 
-// ==============
-// === STATES ===
-// ==============
+const sceneContainer = new PIXI.Container();
+
+// engine.ticker.add(function() {
+//     PIXI.tweenManager.update();
+// });
 
 window.onload = load;
 
@@ -55,15 +60,27 @@ function load() {
 } // load
 
 function create() {
-    /* ***************************** */
-    /* Create your Game Objects here */
-    /* ***************************** */
+    const background = PIXI.Sprite.from('images/background.png');
+    engine.stage.addChild(background);
+    engine.stage.addChild(sceneContainer);
 
-    /* Sprite */
-    sprite.anchor.set(0.5);
-    sprite.x = engine.renderer.width / 2;
-    sprite.y = engine.renderer.height / 2;
-    engine.stage.addChild(sprite);
+
+    /* Buttons */
+    const firstButton = addButton(engine.renderer.width / 2 , engine.renderer.height / 3, 'blue', 1);
+    firstButton.on("click", function (){
+        sceneContainer.removeChildren()
+        createFirstTask()
+    })
+
+    const secondButton = addButton(engine.renderer.width / 2 , firstButton.y + firstButton.height * 5 / 4, 'green', 2);
+    secondButton.on("click", function (){
+        sceneContainer.removeChildren()
+    })
+
+    const thirdButton = addButton(engine.renderer.width / 2 , secondButton.y + firstButton.height * 5/4 , 'orange', 3);
+    thirdButton.on("click", function (){
+        sceneContainer.removeChildren()
+    })
 
     /* FPS */
     const fpsMeterItem = document.createElement('div');
@@ -77,6 +94,61 @@ function create() {
     setInterval(update, 1000.0 / engine.fpsMax);
     render();
 } // create
+
+function addButton(x: number,y: number,color: string, order: number): any {
+    const button = PIXI.Sprite.from(`images/button/${color}_large_button.png`);
+    button.anchor.set(0.5);
+    button.x = x;
+    button.y = y;
+    button.interactive = true;
+    button.buttonMode = true;
+    button.width = 400;
+    button.height = 70;
+    sceneContainer.addChild(button);
+
+    button.on("mouseover", function () {
+        button.alpha = 0.7
+    });
+
+    button.on("mouseout", function () {
+        button.alpha = 1.0
+    });
+
+    const text = new PIXI.Text(`Mini task ${order}`,{fontFamily : 'Arial', fontSize: 32, fill : 'black'});
+    text.anchor.set(0.5)
+    button.addChild(text)
+    return button;
+}
+
+function createFirstTask(){
+    const deckContainerStart = new PIXI.Container();
+
+    // We have 52 cards in one deck so we have to work that function 3 times.
+    for (let i = 0; i < 3; i++) {
+        addCartsToDeck(deckContainerStart)
+    }
+
+    sceneContainer.addChild(deckContainerStart)
+
+}
+
+function addCartsToDeck(deckContainer: PIXI.Container){
+    for (let i = 0; i < 13; i++) {
+        addSingleCard(deckContainer,'clover',i+1)
+        addSingleCard(deckContainer,'diamond',i+1)
+        addSingleCard(deckContainer,'heart',i+1)
+        addSingleCard(deckContainer,'spade',i+1)
+    }
+}
+
+function addSingleCard(deckContainer: PIXI.Container, type: string, order: number){
+    if (cardCount >= 144) return;
+    const card = PIXI.Sprite.from(`images/task-1/${type}/card_${order}_${type}.png`);
+    card.x = 150 + cardCount++ * 3;
+    card.y = 100
+    deckContainer.addChild(card);
+}
+
 
 function update() {
     fpsMeter.updateTime();
@@ -95,7 +167,6 @@ function render() {
     /* ***************************** */
 
     /* Sprite */
-    sprite.rotation += 0.01;
 
     engine.renderer.render(engine.stage);
     fpsMeter.tick();
