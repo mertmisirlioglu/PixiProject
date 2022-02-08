@@ -1,7 +1,8 @@
 // app.ts
 
 import * as PIXI from 'pixi.js'
-// const tweenManager = require('pixi-tween');
+import { Ease, ease } from 'pixi-ease'
+import { Timer, TimerManager } from "eventemitter3-timer";
 
 import { FpsMeter } from './fps-meter';
 
@@ -47,11 +48,22 @@ const engine: any = new Engine({
 let fpsMeter: FpsMeter;
 let cardCount = 0;
 
-const sceneContainer = new PIXI.Container();
 
-// engine.ticker.add(function() {
-//     PIXI.tweenManager.update();
-// });
+const ticker = new PIXI.Ticker();
+ticker.add(() => {
+    engine.renderer.render(engine.stage);
+}, PIXI.UPDATE_PRIORITY.LOW);
+ticker.start();
+
+//create timer
+const timer = new Timer(1000); // in ms
+timer.on("end", () => {
+    console.log("Timer ended.");
+});
+timer.start();
+
+//increment timer in ticker loop
+ticker.add(() => Timer.timerManager.update(ticker.elapsedMS), this);
 
 window.onload = load;
 
@@ -62,24 +74,27 @@ function load() {
 function create() {
     const background = PIXI.Sprite.from('images/background.png');
     engine.stage.addChild(background);
-    engine.stage.addChild(sceneContainer);
 
+
+
+    //increment timer in ticker loop
 
     /* Buttons */
     const firstButton = addButton(engine.renderer.width / 2 , engine.renderer.height / 3, 'blue', 1);
     firstButton.on("click", function (){
-        sceneContainer.removeChildren()
+        engine.stage.removeChildren()
+        engine.stage.addChild(background);
         createFirstTask()
     })
 
     const secondButton = addButton(engine.renderer.width / 2 , firstButton.y + firstButton.height * 5 / 4, 'green', 2);
     secondButton.on("click", function (){
-        sceneContainer.removeChildren()
+        engine.stage.removeChildren()
     })
 
     const thirdButton = addButton(engine.renderer.width / 2 , secondButton.y + firstButton.height * 5/4 , 'orange', 3);
     thirdButton.on("click", function (){
-        sceneContainer.removeChildren()
+        engine.stage.removeChildren()
     })
 
     /* FPS */
@@ -104,7 +119,7 @@ function addButton(x: number,y: number,color: string, order: number): any {
     button.buttonMode = true;
     button.width = 400;
     button.height = 70;
-    sceneContainer.addChild(button);
+    engine.stage.addChild(button);
 
     button.on("mouseover", function () {
         button.alpha = 0.7
@@ -128,7 +143,25 @@ function createFirstTask(){
         addCartsToDeck(deckContainerStart)
     }
 
-    sceneContainer.addChild(deckContainerStart)
+    engine.stage.addChild(deckContainerStart)
+
+    let i = 0
+
+    const timer = new Timer(1000);
+    timer.repeat = 144;
+
+    const last = deckContainerStart.getChildAt(143)
+
+    timer.on('start', () => console.log('start'));
+    timer.on('end', elapsed => console.log('end', elapsed));
+    timer.on('repeat', () => {
+        const nextCard = deckContainerStart.getChildAt(i)
+        ease.add(nextCard, {x: last.x - i++ * 3 , y: 250 } , { reverse: false, duration: 2000, ease: 'easeInOutQuad' })
+    });
+
+    timer.start();
+
+
 
 }
 
