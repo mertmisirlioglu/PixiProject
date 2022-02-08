@@ -72,28 +72,30 @@ function load() {
 } // load
 
 function create() {
+  createUI();
+  setInterval(update, 1000.0 / engine.fpsMax);
+  render();
+} // create
+
+function createUI(){
     const background = PIXI.Sprite.from('images/background.png');
     engine.stage.addChild(background);
 
-
-
-    //increment timer in ticker loop
-
     /* Buttons */
-    const firstButton = addButton(engine.renderer.width / 2 , engine.renderer.height / 3, 'blue', 1);
-    firstButton.on("click", function (){
+    const firstButton = addButton(engine.renderer.width / 2 , engine.renderer.height / 3, 'blue', 'Mini Task 1');
+    firstButton.on("pointerdown", function (){
         engine.stage.removeChildren()
         engine.stage.addChild(background);
         createFirstTask()
     })
 
-    const secondButton = addButton(engine.renderer.width / 2 , firstButton.y + firstButton.height * 5 / 4, 'green', 2);
-    secondButton.on("click", function (){
+    const secondButton = addButton(engine.renderer.width / 2 , firstButton.y + firstButton.height * 5 / 4, 'green', 'Mini Task 2');
+    secondButton.on("pointerdown", function (){
         engine.stage.removeChildren()
     })
 
-    const thirdButton = addButton(engine.renderer.width / 2 , secondButton.y + firstButton.height * 5/4 , 'orange', 3);
-    thirdButton.on("click", function (){
+    const thirdButton = addButton(engine.renderer.width / 2 , secondButton.y + firstButton.height * 5/4 , 'orange', 'Mini Task 3');
+    thirdButton.on("pointerdown", function (){
         engine.stage.removeChildren()
     })
 
@@ -106,11 +108,10 @@ function create() {
         fpsMeterItem.innerHTML = 'FPS: ' + fpsMeter.getFrameRate().toFixed(2).toString();
     });
 
-    setInterval(update, 1000.0 / engine.fpsMax);
-    render();
-} // create
 
-function addButton(x: number,y: number,color: string, order: number): any {
+}
+
+function addButton(x: number,y: number,color: string, message: string): any {
     const button = PIXI.Sprite.from(`images/button/${color}_large_button.png`);
     button.anchor.set(0.5);
     button.x = x;
@@ -129,22 +130,33 @@ function addButton(x: number,y: number,color: string, order: number): any {
         button.alpha = 1.0
     });
 
-    const text = new PIXI.Text(`Mini task ${order}`,{fontFamily : 'Arial', fontSize: 32, fill : 'black'});
+    const text = new PIXI.Text(message,{fontFamily : 'Arial', fontSize: 32, fill : 'black'});
     text.anchor.set(0.5)
     button.addChild(text)
     return button;
 }
 
+/* FIRST TASK */
+
 function createFirstTask(){
+    // if you want to start again this task card count has to be reset
+    cardCount = 0
+
     const deckContainerStart = new PIXI.Container();
 
     // We have 52 cards in one deck so we have to work that function 3 times.
     for (let i = 0; i < 3; i++) {
         addCartsToDeck(deckContainerStart)
     }
-
     engine.stage.addChild(deckContainerStart)
 
+    const timer = new Timer(1000);
+    timer.on('start', () => console.log('delay for start'));
+    timer.on('end', () => StartCartAnimation(deckContainerStart));
+    timer.start();
+}
+
+function StartCartAnimation(deckContainerStart: PIXI.Container){
     let i = 0
 
     const timer = new Timer(1000);
@@ -153,16 +165,21 @@ function createFirstTask(){
     const last = deckContainerStart.getChildAt(143)
 
     timer.on('start', () => console.log('start'));
-    timer.on('end', elapsed => console.log('end', elapsed));
+    timer.on('end', () => {
+        console.log('end')
+        const turnBack = addButton(engine.renderer.width / 2 , engine.renderer.height * 5 / 6, 'blue', 'Do you wanna come back ?');
+        turnBack.on("pointerdown", function (){
+            engine.stage.removeChildren()
+            deckContainerStart.destroy()
+            createUI()
+        })
+    });
     timer.on('repeat', () => {
         const nextCard = deckContainerStart.getChildAt(i)
         ease.add(nextCard, {x: last.x - i++ * 3 , y: 250 } , { reverse: false, duration: 2000, ease: 'easeInOutQuad' })
     });
 
     timer.start();
-
-
-
 }
 
 function addCartsToDeck(deckContainer: PIXI.Container){
@@ -181,6 +198,8 @@ function addSingleCard(deckContainer: PIXI.Container, type: string, order: numbe
     card.y = 100
     deckContainer.addChild(card);
 }
+
+/* FIRST TASK */
 
 
 function update() {
