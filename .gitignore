@@ -7,5 +7,3 @@ node_modules
 package-lock.json
 .DS_Store
 .idea
-.dist
-dist
