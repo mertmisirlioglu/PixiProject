@@ -238,15 +238,15 @@ function CreateRandomObject(order: number, object: any): any{
 
     if (isImage){
         const random = Math.floor(Math.random() * 82);
-        const randomScale = Math.floor(Math.random() * 10) + 10 ;
+        const randomScale = (Math.floor(Math.random() * 5) + 10) * app.renderer.width / gameWidth;
         const image = PIXI.Sprite.from(`/assets/images/task-2/EmojisActivity-${random}.png`);
-        image.width *= randomScale;
-        image.height *= randomScale;
+        image.scale.x = randomScale;
+        image.scale.y = randomScale;
         app.stage.addChild(OrderLocation(image,order))
         return image
     } else {
         const randomText = Math.floor(Math.random() * wordData.length);
-        const randomFont = Math.floor(Math.random() * 24) + 24; // It gives us a number between 16-48
+        const randomFont =( Math.floor(Math.random() * 24) + 24) * app.renderer.width / gameWidth; // It gives us a number between 16-48
         const text = new PIXI.Text(wordData[randomText],{fontFamily : 'Arial', fontSize: randomFont, fill : 'black'});
         app.stage.addChild(OrderLocation(text,order))
         return text
