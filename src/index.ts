@@ -23,25 +23,25 @@ const app = new PIXI.Application({
 
 
 
-function recalculateScale(obj: any){
-    let options =   {
-        container: new Size(window.innerWidth, window.innerHeight),
-        target: new Size(obj.width, obj.height),
-        policy: POLICY.ExactFit, // null | ExactFit | NoBorder | FullHeight | FullWidth | ShowAll
-    }
+// function recalculateScale(obj: any){
+//     let options =   {
+//         container: new Size(window.innerWidth, window.innerHeight),
+//         target: new Size(obj.width, obj.height),
+//         policy: POLICY.ExactFit, // null | ExactFit | NoBorder | FullHeight | FullWidth | ShowAll
+//     }
+//
+//     let rect = getScaledRect(options);
+//     obj.width = rect.width;
+//     obj.height = rect.height;
+//     obj.x = rect.x;
+//     obj.y = rect.y;
+// }
 
-    let rect = getScaledRect(options);
-    obj.width = rect.width;
-    obj.height = rect.height;
-    obj.x = rect.x;
-    obj.y = rect.y;
-}
-
-function recalculateAll(){
-
-         recalculateScale(background);
-
-}
+// function recalculateAll(){
+//
+//          recalculateScale(background);
+//
+// }
 
 // @ts-ignore
 const stats: Stats = addStats(document, app);
@@ -71,16 +71,37 @@ window.onload = async (): Promise<void> => {
 
 const background = PIXI.Sprite.from('/assets/images/background.png');
 
+function getScaledRectangle(obj: any){
+    let options =   {
+        container: new Size(window.innerWidth, window.innerHeight),
+        target: new Size(obj.width, obj.height),
+        policy: POLICY.ExactFit, // null | ExactFit | NoBorder | FullHeight | FullWidth | ShowAll
+    }
+
+    return getScaledRect(options);
+}
+
 function resizeCanvas(): void {
-    recalculateAll()
 
     const resize = () => {
         app.renderer.resize(window.innerWidth, window.innerHeight);
-        //
-        // background.scale.x = window.innerWidth / gameWidth;
-        // background.scale.y = window.innerHeight / gameHeight;
     };
 
+    let rect = getScaledRectangle(app.stage)
+    app.stage.width = rect.width;
+    app.stage.height = rect.height;
+
+    for (let i = 0; i < app.stage.children.length; i++) {
+        const obj : any = app.stage.getChildAt(i);
+        let rect = getScaledRectangle(obj)
+        obj.width = rect.width;
+        obj.height = rect.height;
+        obj.x = rect.x;
+        obj.y = rect.y;
+    }
+
+    background.scale.x = window.innerWidth / gameWidth;
+    background.scale.y = window.innerHeight / gameHeight;
     resize();
     app.renderer.render(app.stage);
 
