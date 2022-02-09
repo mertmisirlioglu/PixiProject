@@ -1,54 +1,32 @@
-# Pixi.js Project #
+[![Netlify Status](https://api.netlify.com/api/v1/badges/14e7ef42-5c90-44c8-a7ec-0b6e20c59735/deploy-status)](https://pixi-typescript-boilerplate.netlify.com) ![Windows build](https://github.com/jkanchelov/pixi-typescript-boilerplate/workflows/Windows%20build/badge.svg?branch=master) ![Linux build](https://github.com/jkanchelov/pixi-typescript-boilerplate/workflows/Linux%20build/badge.svg) ![MacOs build](https://github.com/jkanchelov/pixi-typescript-boilerplate/workflows/MacOs%20build/badge.svg)
 
-A generic frontend **Pixi.js** project boiler plate in **TypeScript** using **Webpack**.
+# pixi-typescript-boilerplate
 
-Main features:
+## Beginner friendly template for pixi.js with [Webpack](https://webpack.js.org/)
 
-* Source Map support
-* Incremental Build
-* Unit tests
-* Browser Hot Reload
+## Highlights
 
+-   🔰 - Beginner friendly.
+-   🚀 - Blazing fast bundle times ( by using [swc](https://github.com/swc-project/swc) for transpiling ) 
+-   🛠 - Typescript + swc
+-   ✈️ - Live reload.
+-   📝 - Consistent code style using Prettier and Eslint
+-   📝 - Unit test support with [Jest](https://jestjs.io/), generating code coverage.
 
-Main dependencies:
+## Usage
 
-* **Application Server**: [Node](https://nodejs.org/en/)
-* **Compiler**: [TypeScript](https://github.com/Microsoft/TypeScript)
-* **Bundler**: [Webpack](https://github.com/webpack/webpack)
-* **Unit Test Runner**: [Mocha](https://github.com/mochajs/mocha)
-* **Pixi.js**: [Pixi.js](http://www.pixijs.com/)
+### Click on the green button "Use this template" on top of the repo or <br> <br> Simply copy paste this and start coding
 
+`git clone --depth=1 --branch=master https://github.com/yordan-kanchelov/pixi-typescript-boilerplate`
 
-## Installation ##
+`rm -r -force ./pixi-typescript-boilerplate/.git`
 
-Node, TypeScript and TSLint should be installed globally.
+## Commands:
 
-	$> git clone https://github.com/yahiko00/PixiProject.git <new folder>
-	$> cd <new folder>
-	$> git init
-	$> npm install
+-   `npm run build` - starts build procedure
+-   `npm run start` - start watching for files and open's server on localhost:8080
+-   `npm run test` - run tests
+-   `npm run code-coverage` - generate code coverage report
+-   `npm run code-style-check` - run's eslint and prettier check on your code
 
-
-## Build ##
-
-Commands should be run under a **bash** shell.
-
-The following command builds and run the project in development mode with Hot Reload.
-
-	$> npm run serve
-
-The following command builds the project in production mode.
-
-	$> npm run build
-
-
-For more predefined commands, see `package.json`, item `scripts`.
-
-## Contributors ##
-
-yahiko
-
-
-## Licence ##
-
-MIT
+For vscode users - ctrl ( or ⌘ ) + shift + b will run the watch build as its set as default vscode task
