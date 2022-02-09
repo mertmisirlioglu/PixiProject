@@ -12,9 +12,7 @@
 
 ###  Simply copy paste this and start coding
 
-`git clone --depth=1 --branch=master https://github.com/mertmisirlioglu/PixiProject`
-
-`rm -r -force ./PixiProject/.git`
+`git clone https://github.com/mertmisirlioglu/PixiProject`
 
 `npm install`
 
