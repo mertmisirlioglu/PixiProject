@@ -3,6 +3,7 @@
 import * as PIXI from 'pixi.js'
 import { Ease, ease } from 'pixi-ease'
 import { Timer, TimerManager } from "eventemitter3-timer";
+import {wordData} from "../data/wordData";
 
 import { FpsMeter } from './fps-meter';
 
@@ -72,33 +73,8 @@ function load() {
 } // load
 
 function create() {
-  createUI();
-  setInterval(update, 1000.0 / engine.fpsMax);
-  render();
-} // create
-
-function createUI(){
-    const background = PIXI.Sprite.from('images/background.png');
-    engine.stage.addChild(background);
-
-    /* Buttons */
-    const firstButton = addButton(engine.renderer.width / 2 , engine.renderer.height / 3, 'blue', 'Mini Task 1');
-    firstButton.on("pointerdown", function (){
-        engine.stage.removeChildren()
-        engine.stage.addChild(background);
-        createFirstTask()
-    })
-
-    const secondButton = addButton(engine.renderer.width / 2 , firstButton.y + firstButton.height * 5 / 4, 'green', 'Mini Task 2');
-    secondButton.on("pointerdown", function (){
-        engine.stage.removeChildren()
-    })
-
-    const thirdButton = addButton(engine.renderer.width / 2 , secondButton.y + firstButton.height * 5/4 , 'orange', 'Mini Task 3');
-    thirdButton.on("pointerdown", function (){
-        engine.stage.removeChildren()
-    })
-
+  CreateUI();
+  
     /* FPS */
     const fpsMeterItem = document.createElement('div');
     fpsMeterItem.classList.add('fps');
@@ -107,11 +83,40 @@ function createUI(){
     fpsMeter = new FpsMeter(() => {
         fpsMeterItem.innerHTML = 'FPS: ' + fpsMeter.getFrameRate().toFixed(2).toString();
     });
+  setInterval(update, 1000.0 / engine.fpsMax);
+  render();
+} // create
+
+function CreateUI(){
+    const background = PIXI.Sprite.from('images/background.png');
+    engine.stage.addChild(background);
+
+    /* Buttons */
+    const firstButton = AddButton(engine.renderer.width / 2 , engine.renderer.height / 3, 'blue', 'Mini Task 1');
+    firstButton.on("pointerdown", function (){
+        engine.stage.removeChildren()
+        engine.stage.addChild(background);
+        CreateFirstTask()
+    })
+
+    const secondButton = AddButton(engine.renderer.width / 2 , firstButton.y + firstButton.height * 5 / 4, 'green', 'Mini Task 2');
+    secondButton.on("pointerdown", function (){
+        engine.stage.removeChildren()
+        engine.stage.addChild(background);
+        CreateSecondTask()
+    })
+
+    const thirdButton = AddButton(engine.renderer.width / 2 , secondButton.y + firstButton.height * 5/4 , 'orange', 'Mini Task 3');
+    thirdButton.on("pointerdown", function (){
+        engine.stage.removeChildren()
+    })
+
+
 
 
 }
 
-function addButton(x: number,y: number,color: string, message: string): any {
+function AddButton(x: number,y: number,color: string, message: string): any {
     const button = PIXI.Sprite.from(`images/button/${color}_large_button.png`);
     button.anchor.set(0.5);
     button.x = x;
@@ -138,7 +143,7 @@ function addButton(x: number,y: number,color: string, message: string): any {
 
 /* FIRST TASK */
 
-function createFirstTask(){
+function CreateFirstTask(){
     // if you want to start again this task card count has to be reset
     cardCount = 0
 
@@ -146,7 +151,7 @@ function createFirstTask(){
 
     // We have 52 cards in one deck so we have to work that function 3 times.
     for (let i = 0; i < 3; i++) {
-        addCartsToDeck(deckContainerStart)
+        AddCartsToDeck(deckContainerStart)
     }
     engine.stage.addChild(deckContainerStart)
 
@@ -167,11 +172,11 @@ function StartCartAnimation(deckContainerStart: PIXI.Container){
     timer.on('start', () => console.log('start'));
     timer.on('end', () => {
         console.log('end')
-        const turnBack = addButton(engine.renderer.width / 2 , engine.renderer.height * 5 / 6, 'blue', 'Do you wanna come back ?');
+        const turnBack = AddButton(engine.renderer.width / 2 , engine.renderer.height * 5 / 6, 'blue', 'Do you wanna come back ?');
         turnBack.on("pointerdown", function (){
             engine.stage.removeChildren()
             deckContainerStart.destroy()
-            createUI()
+            CreateUI()
         })
     });
     timer.on('repeat', () => {
@@ -182,16 +187,16 @@ function StartCartAnimation(deckContainerStart: PIXI.Container){
     timer.start();
 }
 
-function addCartsToDeck(deckContainer: PIXI.Container){
+function AddCartsToDeck(deckContainer: PIXI.Container){
     for (let i = 0; i < 13; i++) {
-        addSingleCard(deckContainer,'clover',i+1)
-        addSingleCard(deckContainer,'diamond',i+1)
-        addSingleCard(deckContainer,'heart',i+1)
-        addSingleCard(deckContainer,'spade',i+1)
+        AddSingleCard(deckContainer,'clover',i+1)
+        AddSingleCard(deckContainer,'diamond',i+1)
+        AddSingleCard(deckContainer,'heart',i+1)
+        AddSingleCard(deckContainer,'spade',i+1)
     }
 }
 
-function addSingleCard(deckContainer: PIXI.Container, type: string, order: number){
+function AddSingleCard(deckContainer: PIXI.Container, type: string, order: number){
     if (cardCount >= 144) return;
     const card = PIXI.Sprite.from(`images/task-1/${type}/card_${order}_${type}.png`);
     card.x = 150 + cardCount++ * 3;
@@ -200,6 +205,64 @@ function addSingleCard(deckContainer: PIXI.Container, type: string, order: numbe
 }
 
 /* FIRST TASK */
+
+
+/* SECOND TASK */
+
+function CreateSecondTask(){
+    let obj1: any,obj2: any,obj3: any;
+
+    const timer = new Timer(2000);
+    timer.loop = true;
+
+    timer.on('start', () => console.log('delay for start'));
+    timer.on('repeat', () => {
+        obj1 = CreateRandomObject(1, obj1);
+        obj2 = CreateRandomObject(2, obj2);
+        obj3 = CreateRandomObject(3, obj3);
+    });
+    timer.start();
+
+    const turnBack = AddButton(engine.renderer.width / 2 , engine.renderer.height * 5 / 6, 'blue', 'Do you wanna come back ?');
+    turnBack.on("pointerdown", function (){
+        engine.stage.removeChildren()
+        timer.stop();
+        CreateUI()
+    })
+}
+
+function CreateRandomObject(order: number, object: any): any{
+    if (object) object.destroy();
+    const isImage = Math.random() > 0.5;
+
+    if (isImage){
+        const random = Math.floor(Math.random() * 82);
+        const randomScale = Math.floor(Math.random() * 10) + 10 ;
+        const image = PIXI.Sprite.from(`images/task-2/EmojisActivity-${random}.png`);
+        image.width *= randomScale;
+        image.height *= randomScale;
+        engine.stage.addChild(OrderLocation(image,order))
+        return image
+    } else {
+        const randomText = Math.floor(Math.random() * wordData.length);
+        const randomFont = Math.floor(Math.random() * 24) + 24; // It gives us a number between 16-48
+        const text = new PIXI.Text(wordData[randomText],{fontFamily : 'Arial', fontSize: randomFont, fill : 'black'});
+        engine.stage.addChild(OrderLocation(text,order))
+        return text
+    }
+}
+
+function OrderLocation(obj: any, order: number){
+    obj.anchor.set(0.5);
+    obj.y = engine.renderer.height / 2;
+    obj.x = engine.renderer.width / 2
+    if (order == 1) obj.x = engine.renderer.width / 4;
+    if (order == 3) obj.x = engine.renderer.width * 3 / 4;
+    return obj;
+}
+
+/* SECOND TASK */
+
 
 
 function update() {
