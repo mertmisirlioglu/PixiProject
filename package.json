@@ -14,6 +14,7 @@
         "build": "npm run type-check && npm run webpack -- --env mode=production",
         "start": "node server.js",
         "dev": "npm run webpack-dev-server -- --env mode=development",
+        "watch": "npm-run-all --parallel type-check:watch dev",
         "test": "npx jest",
         "code-coverage": "jest --coverage",
         "prettier": "npx prettier",
@@ -27,6 +28,7 @@
     "license": "MIT",
     "dependencies": {
         "@pixi/layers": "^1.0.11",
+        "adaptive-scale": "^1.0.0",
         "core-js": "^3.20.3",
         "eventemitter3-timer": "^1.0.1",
         "express": "^4.17.2",

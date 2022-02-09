@@ -5,10 +5,10 @@ import { Timer } from "eventemitter3-timer";
 import {wordData} from "../assets/data/wordData";
 import * as particles from 'pixi-particles'
 import { addStats, Stats } from 'pixi-stats';
-
+import {POLICY, Size, getScaledRect} from 'adaptive-scale/lib';
 declare const VERSION: string;
-// @ts-ignore
-window['PIXI'] = PIXI;
+// // @ts-ignore
+// window['PIXI'] = PIXI;
 
 const gameWidth = 800;
 const gameHeight = 600;
@@ -20,6 +20,28 @@ const app = new PIXI.Application({
     width: gameWidth,
     height: gameHeight,
 });
+
+
+
+function recalculateScale(obj: any){
+    let options =   {
+        container: new Size(window.innerWidth, window.innerHeight),
+        target: new Size(obj.width, obj.height),
+        policy: POLICY.ExactFit, // null | ExactFit | NoBorder | FullHeight | FullWidth | ShowAll
+    }
+
+    let rect = getScaledRect(options);
+    obj.width = rect.width;
+    obj.height = rect.height;
+    obj.x = rect.x;
+    obj.y = rect.y;
+}
+
+function recalculateAll(){
+
+         recalculateScale(background);
+
+}
 
 // @ts-ignore
 const stats: Stats = addStats(document, app);
@@ -39,32 +61,37 @@ app.ticker.add(() => Timer.timerManager.update(app.ticker.elapsedMS), this);
 window.onload = async (): Promise<void> => {
 
     document.body.appendChild(app.view);
+    resizeCanvas()
 
     CreateUI();
-    // resizeCanvas();
-
 
     app.stage.interactive = true;
 };
 
 
+const background = PIXI.Sprite.from('/assets/images/background.png');
 
-// function resizeCanvas(): void {
-//     const resize = () => {
-//         app.renderer.resize(window.innerWidth, window.innerHeight);
-//         app.stage.scale.x = window.innerWidth / gameWidth;
-//         app.stage.scale.y = window.innerHeight / gameHeight;
-//     };
-//
-//     resize();
-//
-//     window.addEventListener("resize", resize);
-// }
+function resizeCanvas(): void {
+    recalculateAll()
+
+    const resize = () => {
+        app.renderer.resize(window.innerWidth, window.innerHeight);
+        //
+        // background.scale.x = window.innerWidth / gameWidth;
+        // background.scale.y = window.innerHeight / gameHeight;
+    };
+
+    resize();
+    app.renderer.render(app.stage);
+
+
+    window.addEventListener("resize", resize);
+}
 
 let cardCount = 0;
 
 function CreateUI(){
-    const background = PIXI.Sprite.from('/assets/images/background.png');
+
     app.stage.addChild(background);
 
     /* Buttons */
@@ -141,7 +168,7 @@ function StartCartAnimation(deckContainerStart: PIXI.Container){
     const timer = new Timer(1000);
     timer.repeat = 144;
 
-    const last = deckContainerStart.getChildAt(143)
+    const last: any = deckContainerStart.getChildAt(143)
 
     timer.on('start', () => console.log('start'));
     timer.on('end', () => {
@@ -155,7 +182,7 @@ function StartCartAnimation(deckContainerStart: PIXI.Container){
     });
     timer.on('repeat', () => {
         const nextCard = deckContainerStart.getChildAt(i)
-        ease.add(nextCard, {x: last.x - i++ * 3 , y: 250 } , { reverse: false, duration: 2000, ease: 'easeInOutQuad' })
+        ease.add(nextCard, {x: last.x - (i++ * 4  *  app.renderer.width / gameWidth) , y: last.height * 4 } , { reverse: false, duration: 2000, ease: 'easeInOutQuad' })
     });
 
     timer.start();
@@ -173,8 +200,8 @@ function AddCartsToDeck(deckContainer: PIXI.Container){
 function AddSingleCard(deckContainer: PIXI.Container, type: string, order: number){
     if (cardCount >= 144) return;
     const card = PIXI.Sprite.from(`/assets/images/task-1/${type}/card_${order}_${type}.png`);
-    card.x = 150 + cardCount++ * 3;
-    card.y = 150
+    card.x = app.renderer.width / (30 *gameWidth  / app.renderer.width) + cardCount++ * 4  *  app.renderer.width / gameWidth;
+    card.y = app.renderer.height / 4;
     deckContainer.addChild(card);
 }
 
@@ -367,7 +394,7 @@ function CreateThirdTask(){
         emitter.emit = true;
     });
 
-    const turnBack = AddButton(app.renderer.width / 2 , app.renderer.height * 5 / 6, 'blue', 'Go back to menu');
+    const turnBack = AddButton(app.renderer.width / 2 , playButton.y + playButton.height* 1.25, 'blue', 'Go back to menu');
     turnBack.width = 200;
     turnBack.on("pointerdown", function (){
         app.stage.removeChildren();
