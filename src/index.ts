@@ -21,39 +21,9 @@ const app = new PIXI.Application({
     height: gameHeight,
 });
 
-
-
-// function recalculateScale(obj: any){
-//     let options =   {
-//         container: new Size(window.innerWidth, window.innerHeight),
-//         target: new Size(obj.width, obj.height),
-//         policy: POLICY.ExactFit, // null | ExactFit | NoBorder | FullHeight | FullWidth | ShowAll
-//     }
-//
-//     let rect = getScaledRect(options);
-//     obj.width = rect.width;
-//     obj.height = rect.height;
-//     obj.x = rect.x;
-//     obj.y = rect.y;
-// }
-
-// function recalculateAll(){
-//
-//          recalculateScale(background);
-//
-// }
-
 // @ts-ignore
 const stats: Stats = addStats(document, app);
 app.ticker.add(stats.update, stats);
-
-
-//create timer
-const timer = new Timer(1000); // in ms
-timer.on("end", () => {
-    console.log("Timer ended.");
-});
-timer.start();
 
 //increment timer in ticker loop
 app.ticker.add(() => Timer.timerManager.update(app.ticker.elapsedMS), this);
@@ -194,19 +164,21 @@ function StartCartAnimation(deckContainerStart: PIXI.Container){
     timer.on('start', () => console.log('start'));
     timer.on('end', () => {
         console.log('end')
-        const turnBack = AddButton(app.renderer.width / 2 , app.renderer.height * 5 / 6, 'blue', 'Go back to menu');
-        turnBack.on("pointerdown", function (){
-            app.stage.removeChildren()
-            deckContainerStart.destroy()
-            CreateUI()
-        })
     });
     timer.on('repeat', () => {
         const nextCard = deckContainerStart.getChildAt(i)
-        ease.add(nextCard, {x: last.x - (i++ * 4  *  app.renderer.width / gameWidth) , y: last.height * 4 } , { reverse: false, duration: 2000, ease: 'easeInOutQuad' })
+        ease.add(nextCard, {x: last.x - (i++ * 4  *  app.renderer.width / gameWidth) , y: last.height * (4 * window.innerHeight/gameHeight) } , { reverse: false, duration: 2000, ease: 'easeInOutQuad' })
     });
 
     timer.start();
+
+    const turnBack = AddButton(app.renderer.width / 2 , app.renderer.height * 5 / 6, 'blue', 'Go back to menu');
+    turnBack.on("pointerdown", function (){
+        timer.stop();
+        app.stage.removeChildren()
+        deckContainerStart.destroy()
+        CreateUI()
+    });
 }
 
 function AddCartsToDeck(deckContainer: PIXI.Container){
