@@ -10,9 +10,11 @@
 
 ## Usage
 
-###  Simply copy paste this and start coding
+###  Simply copy paste this and start playing!
 
 `git clone https://github.com/mertmisirlioglu/PixiProject`
+
+`cd PixiProject`
 
 `npm install`
 
