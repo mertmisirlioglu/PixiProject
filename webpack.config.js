@@ -15,6 +15,7 @@ module.exports = (env) => {
 
         resolve: {
             extensions: [".ts", ".tsx", ".js", ".json"],
+            fallback: { "path": false }
         },
 
         module: {

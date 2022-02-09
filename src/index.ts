@@ -3,8 +3,11 @@ import "./style.css";
 import {  ease } from 'pixi-ease'
 import { Timer } from "eventemitter3-timer";
 import {wordData} from "../assets/data/wordData";
+import * as particles from 'pixi-particles'
 
 declare const VERSION: string;
+// @ts-ignore
+window['PIXI'] = PIXI;
 
 const gameWidth = 800;
 const gameHeight = 600;
@@ -28,7 +31,6 @@ timer.start();
 app.ticker.add(() => Timer.timerManager.update(app.ticker.elapsedMS), this);
 
 window.onload = async (): Promise<void> => {
-    await loadGameAssets();
 
     document.body.appendChild(app.view);
 
@@ -39,35 +41,19 @@ window.onload = async (): Promise<void> => {
     app.stage.interactive = true;
 };
 
-async function loadGameAssets(): Promise<void> {
-    return new Promise((res, rej) => {
-        const loader = PIXI.Loader.shared;
-        loader.add("rabbit", "./assets/simpleSpriteSheet.json");
-        loader.add("pixie", "./assets/spine-assets/pixie.json");
 
-        loader.onComplete.once(() => {
-            res();
-        });
 
-        loader.onError.once(() => {
-            rej();
-        });
-
-        loader.load();
-    });
-}
-
-function resizeCanvas(): void {
-    const resize = () => {
-        app.renderer.resize(window.innerWidth, window.innerHeight);
-        app.stage.scale.x = window.innerWidth / gameWidth;
-        app.stage.scale.y = window.innerHeight / gameHeight;
-    };
-
-    resize();
-
-    window.addEventListener("resize", resize);
-}
+// function resizeCanvas(): void {
+//     const resize = () => {
+//         app.renderer.resize(window.innerWidth, window.innerHeight);
+//         app.stage.scale.x = window.innerWidth / gameWidth;
+//         app.stage.scale.y = window.innerHeight / gameHeight;
+//     };
+//
+//     resize();
+//
+//     window.addEventListener("resize", resize);
+// }
 
 let cardCount = 0;
 
@@ -93,6 +79,8 @@ function CreateUI(){
     const thirdButton = AddButton(app.renderer.width / 2 , secondButton.y + firstButton.height * 5/4 , 'orange', 'Mini Task 3');
     thirdButton.on("pointerdown", function (){
         app.stage.removeChildren()
+        app.stage.addChild(background);
+        CreateThirdTask()
     })
 }
 
@@ -242,4 +230,143 @@ function OrderLocation(obj: any, order: number){
 }
 
 /* SECOND TASK */
+
+
+/* THIRD TASK */
+
+let emitter: any;
+
+function CreateEmitter(){
+    let particleContainer = new PIXI.ParticleContainer();
+    app.stage.addChild(particleContainer)
+
+    emitter = new particles.Emitter(
+        particleContainer,
+        [PIXI.Texture.from('assets/images/task-3/fire.png'),PIXI.Texture.from('assets/images/task-3/particle.png')],
+        {
+            alpha: {
+                list: [
+                    {
+                        value: 0.8,
+                        time: 0
+                    },
+                    {
+                        value: 0.1,
+                        time: 1
+                    }
+                ],
+                isStepped: false
+            },
+            scale: {
+                list: [
+                    {
+                        value: 1,
+                        time: 0
+                    },
+                    {
+                        value: 0.3,
+                        time: 1
+                    }
+                ],
+                isStepped: false
+            },
+            color: {
+                list: [
+                    {
+                        value: "fb1010",
+                        time: 0
+                    },
+                    {
+                        value: "f5b830",
+                        time: 1
+                    }
+                ],
+                isStepped: false
+            },
+            speed: {
+                list: [
+                    {
+                        value: 200,
+                        time: 0
+                    },
+                    {
+                        value: 100,
+                        time: 1
+                    }
+                ],
+                isStepped: false
+            },
+            startRotation: {
+                min: 0,
+                max: 360
+            },
+            rotationSpeed: {
+                min: 0,
+                max: 0
+            },
+            lifetime: {
+                min: 2,
+                max: 5
+            },
+            frequency: 0.016,
+            spawnChance: 100,
+            particlesPerWave: 10,
+            emitterLifetime: 0.31,
+            maxParticles: 1000,
+            pos: {
+                x: 0,
+                y: 0
+            },
+            addAtBack: true,
+            spawnType: "circle",
+            spawnCircle: {
+                x: 0,
+                y: 0,
+                r: 10
+            }
+        }
+    );
+
+
+    let elapsed = Date.now();
+    // Update function every frame
+    const update = function(){
+
+        // Update the next frame
+        requestAnimationFrame(update);
+
+        const now = Date.now();
+
+        // The emitter requires the elapsed
+        // number of seconds since the last update
+        emitter.update((now - elapsed) * 0.001);
+
+        elapsed = now;
+        // Should re-render the PIXI Stage
+        app.renderer.render(app.stage);
+    };
+
+    update();
+}
+
+function CreateThirdTask(){
+    CreateEmitter();
+    emitter.emit = true;
+    emitter.updateOwnerPos(300, 300);
+    emitter.autoUpdate = true;
+
+    const playButton = AddButton(app.renderer.width/2, app.renderer.width / 2, 'orange' , 'Play!')
+    playButton.width = 200;
+    playButton.on('pointerdown', function(){
+        emitter.emit = true;
+    });
+
+    const turnBack = AddButton(app.renderer.width / 2 , app.renderer.height * 5 / 6, 'blue', 'Do you wanna come back ?');
+    turnBack.width = 200;
+    turnBack.on("pointerdown", function (){
+        app.stage.removeChildren();
+        emitter.destroy();
+        CreateUI()
+    })
+}
 

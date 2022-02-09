@@ -29,6 +29,7 @@
         "core-js": "^3.20.3",
         "eventemitter3-timer": "^1.0.1",
         "pixi-ease": "^3.0.7",
+        "pixi-particles": "^4.3.1",
         "pixi-spine": "^3.0.13",
         "pixi.js": "^6.2.2",
         "regenerator-runtime": "^0.13.9"
