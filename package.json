@@ -1,7 +1,7 @@
 {
-    "name": "pixi-typescript-boilerplate",
+    "name": "Mini-task for Softgames",
     "version": "1.0.0",
-    "description": "pixi.js typescript boilerplate webpack",
+    "description": "mini-task",
     "browserslist": "> 0.25%, not dead",
     "scripts": {
         "webpack": "webpack",
@@ -22,7 +22,7 @@
         "code-style-check": "npm run lint-check && npm run prettier:check",
         "prepare": "husky install"
     },
-    "author": "jkanchelov",
+    "author": "Mert Mısırlıoğlu",
     "license": "MIT",
     "dependencies": {
         "@pixi/layers": "^1.0.11",
@@ -31,6 +31,7 @@
         "pixi-ease": "^3.0.7",
         "pixi-particles": "^4.3.1",
         "pixi-spine": "^3.0.13",
+        "pixi-stats": "^1.0.7",
         "pixi.js": "^6.2.2",
         "regenerator-runtime": "^0.13.9"
     },

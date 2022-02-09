@@ -4,6 +4,7 @@ import {  ease } from 'pixi-ease'
 import { Timer } from "eventemitter3-timer";
 import {wordData} from "../assets/data/wordData";
 import * as particles from 'pixi-particles'
+import { addStats, Stats } from 'pixi-stats';
 
 declare const VERSION: string;
 // @ts-ignore
@@ -19,6 +20,11 @@ const app = new PIXI.Application({
     width: gameWidth,
     height: gameHeight,
 });
+
+// @ts-ignore
+const stats: Stats = addStats(document, app);
+app.ticker.add(stats.update, stats);
+
 
 //create timer
 const timer = new Timer(1000); // in ms
@@ -140,7 +146,7 @@ function StartCartAnimation(deckContainerStart: PIXI.Container){
     timer.on('start', () => console.log('start'));
     timer.on('end', () => {
         console.log('end')
-        const turnBack = AddButton(app.renderer.width / 2 , app.renderer.height * 5 / 6, 'blue', 'Do you wanna come back ?');
+        const turnBack = AddButton(app.renderer.width / 2 , app.renderer.height * 5 / 6, 'blue', 'Go back to menu');
         turnBack.on("pointerdown", function (){
             app.stage.removeChildren()
             deckContainerStart.destroy()
@@ -168,7 +174,7 @@ function AddSingleCard(deckContainer: PIXI.Container, type: string, order: numbe
     if (cardCount >= 144) return;
     const card = PIXI.Sprite.from(`/assets/images/task-1/${type}/card_${order}_${type}.png`);
     card.x = 150 + cardCount++ * 3;
-    card.y = 100
+    card.y = 150
     deckContainer.addChild(card);
 }
 
@@ -191,7 +197,7 @@ function CreateSecondTask(){
     });
     timer.start();
 
-    const turnBack = AddButton(app.renderer.width / 2 , app.renderer.height * 5 / 6, 'blue', 'Do you wanna come back ?');
+    const turnBack = AddButton(app.renderer.width / 2 , app.renderer.height * 5 / 6, 'blue', 'Go back to menu.');
     turnBack.on("pointerdown", function (){
         app.stage.removeChildren()
         timer.stop();
@@ -361,7 +367,7 @@ function CreateThirdTask(){
         emitter.emit = true;
     });
 
-    const turnBack = AddButton(app.renderer.width / 2 , app.renderer.height * 5 / 6, 'blue', 'Do you wanna come back ?');
+    const turnBack = AddButton(app.renderer.width / 2 , app.renderer.height * 5 / 6, 'blue', 'Go back to menu');
     turnBack.width = 200;
     turnBack.on("pointerdown", function (){
         app.stage.removeChildren();
