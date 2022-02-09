@@ -5,13 +5,14 @@
     "browserslist": "> 0.25%, not dead",
     "scripts": {
         "webpack": "webpack",
+        "serve": "webpack serve -- --env mode=production",
         "webpack-dev-server": "webpack-dev-server",
         "type-check": "tsc --noEmit",
         "type-check:watch": "npm run type-check -- -w",
         "prebuild": "npm run clean",
         "clean": "npx rimraf dist",
         "build": "npm run type-check && npm run webpack -- --env mode=production",
-        "start": "npm-run-all --parallel type-check:watch dev",
+        "start": "npm run build && webpack-dev-server --host=0.0.0.0",
         "dev": "npm run webpack-dev-server -- --env mode=development",
         "test": "npx jest",
         "code-coverage": "jest --coverage",
@@ -28,6 +29,7 @@
         "@pixi/layers": "^1.0.11",
         "core-js": "^3.20.3",
         "eventemitter3-timer": "^1.0.1",
+        "express": "^4.17.2",
         "pixi-ease": "^3.0.7",
         "pixi-particles": "^4.3.1",
         "pixi-spine": "^3.0.13",
@@ -88,5 +90,6 @@
         "setupFiles": [
             "jest-canvas-mock"
         ]
-    }
+    },
+    "heroku-run-build-script": true
 }
