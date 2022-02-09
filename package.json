@@ -12,7 +12,7 @@
         "prebuild": "npm run clean",
         "clean": "npx rimraf dist",
         "build": "npm run type-check && npm run webpack -- --env mode=production",
-        "start": "npm run build && webpack-dev-server --host=0.0.0.0 --port=$PORT --disable-host-check",
+        "start": "node server.js",
         "dev": "npm run webpack-dev-server -- --env mode=development",
         "test": "npx jest",
         "code-coverage": "jest --coverage",
