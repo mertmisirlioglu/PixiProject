@@ -409,7 +409,7 @@ function CreateThirdTask(){
     emitter.updateOwnerPos(300, 300);
     emitter.autoUpdate = true;
 
-    const playButton = AddButton(app.renderer.width/2, app.renderer.width / 2, 'orange' , 'Play!')
+    const playButton = AddButton(app.renderer.width/2, app.renderer.height / 2, 'orange' , 'Play!')
     playButton.width = 200;
     playButton.on('pointerdown', function(){
         emitter.emit = true;
